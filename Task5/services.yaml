@@ -1,0 +1,107 @@
+# Task 5 — четыре сервиса (nginx) и namespace для лабораторной по NetworkPolicy.
+#
+# Все живут в одном namespace `net-lab`. Каждый под помечен ролью через
+# label `role=<имя>` — ровно по требованию задания.
+#
+# Эквивалент команд из ТЗ (kubectl run --labels role=... --expose --port 80),
+# но в виде декларативного манифеста — это удобнее версионировать и применять
+# повторно.
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: net-lab
+  labels:
+    purpose: task5-network-policies
+---
+# ─── front-end ────────────────────────────────────────────────────────────
+apiVersion: v1
+kind: Pod
+metadata:
+  name: front-end-app
+  namespace: net-lab
+  labels:
+    role: front-end
+spec:
+  containers:
+    - name: nginx
+      image: nginx:1.27-alpine
+      ports: [{ containerPort: 80 }]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: front-end
+  namespace: net-lab
+spec:
+  selector: { role: front-end }
+  ports: [{ port: 80, targetPort: 80 }]
+---
+# ─── back-end-api ─────────────────────────────────────────────────────────
+apiVersion: v1
+kind: Pod
+metadata:
+  name: back-end-api-app
+  namespace: net-lab
+  labels:
+    role: back-end-api
+spec:
+  containers:
+    - name: nginx
+      image: nginx:1.27-alpine
+      ports: [{ containerPort: 80 }]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: back-end-api
+  namespace: net-lab
+spec:
+  selector: { role: back-end-api }
+  ports: [{ port: 80, targetPort: 80 }]
+---
+# ─── admin-front-end ──────────────────────────────────────────────────────
+apiVersion: v1
+kind: Pod
+metadata:
+  name: admin-front-end-app
+  namespace: net-lab
+  labels:
+    role: admin-front-end
+spec:
+  containers:
+    - name: nginx
+      image: nginx:1.27-alpine
+      ports: [{ containerPort: 80 }]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-front-end
+  namespace: net-lab
+spec:
+  selector: { role: admin-front-end }
+  ports: [{ port: 80, targetPort: 80 }]
+---
+# ─── admin-back-end-api ───────────────────────────────────────────────────
+apiVersion: v1
+kind: Pod
+metadata:
+  name: admin-back-end-api-app
+  namespace: net-lab
+  labels:
+    role: admin-back-end-api
+spec:
+  containers:
+    - name: nginx
+      image: nginx:1.27-alpine
+      ports: [{ containerPort: 80 }]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-back-end-api
+  namespace: net-lab
+spec:
+  selector: { role: admin-back-end-api }
+  ports: [{ port: 80, targetPort: 80 }]
