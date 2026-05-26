@@ -1,0 +1,38 @@
+# БЕЗОПАСНАЯ версия 02-hostpath-pod.yaml.
+#
+# Что починили:
+#   - hostPath заменён на emptyDir — для рабочего файлового пространства
+#     внутри пода этого достаточно. Никакого доступа к хост-ФС.
+#   - все стандартные защиты PSA restricted на месте.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secure-no-hostpath
+  namespace: audit-zone
+spec:
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    runAsGroup: 10001
+    fsGroup: 10001
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+    - name: shell
+      image: alpine:3.20
+      command: ["sleep", "3600"]
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop: ["ALL"]
+      volumeMounts:
+        - name: workdir
+          mountPath: /work
+        - name: tmp
+          mountPath: /tmp
+  volumes:
+    - name: workdir
+      emptyDir: {}                       # ← вместо hostPath
+    - name: tmp
+      emptyDir: {}

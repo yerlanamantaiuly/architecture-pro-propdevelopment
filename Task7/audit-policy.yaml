@@ -1,0 +1,27 @@
+# Audit-policy для kube-apiserver — синхронизирована с Task 6 (общий контекст
+# аудита), но с дополнительными ресурсами, релевантными для Task 7.
+#
+# Сюда добавлены:
+#   - resources `K8sPSPPrivilegedContainer`, `K8sPSPHostPath`, `K8sPSPRunAsNonRoot`
+#     в группе constraints.gatekeeper.sh — чтобы видеть все попытки создания
+#     и изменения constraint-объектов.
+#   - resources ConstraintTemplate в группе templates.gatekeeper.sh.
+#
+# Catch-all правило Metadata оставлено как в Task 6 (без `resources` блока).
+apiVersion: audit.k8s.io/v1
+kind: Policy
+rules:
+  # Полное тело запросов/ответов для чувствительных ресурсов
+  - level: RequestResponse
+    verbs: ["create", "delete", "update", "patch", "get", "list"]
+    resources:
+      - group: ""
+        resources: ["pods", "secrets", "configmaps", "serviceaccounts"]
+      - group: "rbac.authorization.k8s.io"
+        resources: ["roles", "rolebindings", "clusterroles", "clusterrolebindings"]
+      - group: "constraints.gatekeeper.sh"
+        resources: ["*"]
+      - group: "templates.gatekeeper.sh"
+        resources: ["constrainttemplates"]
+  # Метаданные для всего остального (catch-all)
+  - level: Metadata

@@ -1,0 +1,19 @@
+# Namespace `audit-zone` с PodSecurity Admission на уровне restricted.
+#
+# Три метки:
+#   - enforce: блокирует поды, нарушающие restricted-профиль;
+#   - audit:   пишет такие нарушения в audit-лог apiserver-а;
+#   - warn:    показывает предупреждение в ответе kubectl, даже когда
+#              ресурс прошёл (полезно при патчинге существующих манифестов).
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: audit-zone
+  labels:
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: latest
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/audit-version: latest
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/warn-version: latest
+    purpose: task7-container-security

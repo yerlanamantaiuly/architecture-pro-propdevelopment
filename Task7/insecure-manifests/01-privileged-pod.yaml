@@ -1,0 +1,15 @@
+# НЕЗАЩИЩЁННЫЙ под — нарушает PSA restricted И OPA Gatekeeper constraint
+# k8spspprivileged. Используется только для демонстрации, что admission
+# действительно блокирует такой манифест.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: privileged-pod
+  namespace: audit-zone
+spec:
+  containers:
+    - name: pwn
+      image: alpine:3.20
+      command: ["sleep", "3600"]
+      securityContext:
+        privileged: true                # ← главная проблема

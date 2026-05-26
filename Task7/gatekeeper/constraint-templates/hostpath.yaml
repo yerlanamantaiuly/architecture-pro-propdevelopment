@@ -1,0 +1,26 @@
+# ConstraintTemplate: K8sPSPHostPath.
+# Запрещает использование volume типа hostPath.
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8spsphostpath
+  annotations:
+    description: "Bans pods that mount any hostPath volume."
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sPSPHostPath
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8spsphostpath
+
+        violation[{"msg": msg, "details": {"volume": v.name}}] {
+          v := input.review.object.spec.volumes[_]
+          v.hostPath
+          msg := sprintf(
+            "hostPath volume is not allowed: volume=%v, path=%v",
+            [v.name, v.hostPath.path]
+          )
+        }
