@@ -1,0 +1,150 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: prop-devs-binding
+  namespace: sales
+  labels: { managed-by: task4-rbac, prop-domain: sales }
+subjects:
+  - kind: Group
+    name: prop-domain-devs-sales
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: prop-namespace-developer
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: prop-managers-binding
+  namespace: sales
+  labels: { managed-by: task4-rbac, prop-domain: sales }
+subjects:
+  - kind: Group
+    name: prop-domain-managers-sales
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: prop-namespace-viewer
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: prop-devs-binding
+  namespace: tenant
+  labels: { managed-by: task4-rbac, prop-domain: tenant }
+subjects:
+  - kind: Group
+    name: prop-domain-devs-tenant
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: prop-namespace-developer
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: prop-managers-binding
+  namespace: tenant
+  labels: { managed-by: task4-rbac, prop-domain: tenant }
+subjects:
+  - kind: Group
+    name: prop-domain-managers-tenant
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: prop-namespace-viewer
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: prop-devs-binding
+  namespace: smart-home
+  labels: { managed-by: task4-rbac, prop-domain: smart-home }
+subjects:
+  - kind: Group
+    name: prop-domain-devs-smart-home
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: prop-namespace-developer
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: prop-managers-binding
+  namespace: smart-home
+  labels: { managed-by: task4-rbac, prop-domain: smart-home }
+subjects:
+  - kind: Group
+    name: prop-domain-managers-smart-home
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: prop-namespace-viewer
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: prop-devs-binding
+  namespace: finance
+  labels: { managed-by: task4-rbac, prop-domain: finance }
+subjects:
+  - kind: Group
+    name: prop-domain-devs-finance
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: prop-namespace-developer
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: prop-managers-binding
+  namespace: finance
+  labels: { managed-by: task4-rbac, prop-domain: finance }
+subjects:
+  - kind: Group
+    name: prop-domain-managers-finance
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: prop-namespace-viewer
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: prop-devs-binding
+  namespace: data
+  labels: { managed-by: task4-rbac, prop-domain: data }
+subjects:
+  - kind: Group
+    name: prop-domain-devs-data
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: prop-namespace-developer
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: prop-managers-binding
+  namespace: data
+  labels: { managed-by: task4-rbac, prop-domain: data }
+subjects:
+  - kind: Group
+    name: prop-domain-managers-data
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: prop-namespace-viewer
+  apiGroup: rbac.authorization.k8s.io
