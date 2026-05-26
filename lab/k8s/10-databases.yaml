@@ -1,0 +1,160 @@
+# Четыре отдельных Postgres — по одной на сервис, как на диаграмме контейнеров.
+# Каждая БД получает init-скрипт через ConfigMap (создаётся отдельным kustomize-merge'ем
+# в bootstrap.sh: kubectl create cm <name> --from-file=seed.sql=services/<svc>/seed.sql).
+# Сами Deployment-ы — здесь.
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-mart-db
+  namespace: propdev
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: client-mart-db } }
+  template:
+    metadata: { labels: { app: client-mart-db, tier: db } }
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          env:
+            - { name: POSTGRES_DB,       value: client_mart }
+            - { name: POSTGRES_USER,     value: mart }
+            - { name: POSTGRES_PASSWORD, value: mart }
+          ports: [{ containerPort: 5432 }]
+          readinessProbe:
+            tcpSocket: { port: 5432 }
+            initialDelaySeconds: 5
+            periodSeconds: 3
+          volumeMounts:
+            - { name: seed, mountPath: /docker-entrypoint-initdb.d }
+            - { name: data, mountPath: /var/lib/postgresql/data }
+      volumes:
+        - name: seed
+          configMap: { name: client-mart-seed }
+        - name: data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata: { name: client-mart-db, namespace: propdev }
+spec:
+  selector: { app: client-mart-db }
+  ports: [{ port: 5432, targetPort: 5432 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-crm-db
+  namespace: propdev
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: client-crm-db } }
+  template:
+    metadata: { labels: { app: client-crm-db, tier: db } }
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          env:
+            - { name: POSTGRES_DB,       value: client_crm }
+            - { name: POSTGRES_USER,     value: crm }
+            - { name: POSTGRES_PASSWORD, value: crm }
+          ports: [{ containerPort: 5432 }]
+          readinessProbe:
+            tcpSocket: { port: 5432 }
+            initialDelaySeconds: 5
+            periodSeconds: 3
+          volumeMounts:
+            - { name: seed, mountPath: /docker-entrypoint-initdb.d }
+            - { name: data, mountPath: /var/lib/postgresql/data }
+      volumes:
+        - name: seed
+          configMap: { name: client-crm-seed }
+        - name: data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata: { name: client-crm-db, namespace: propdev }
+spec:
+  selector: { app: client-crm-db }
+  ports: [{ port: 5432, targetPort: 5432 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tenant-core-db
+  namespace: propdev
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: tenant-core-db } }
+  template:
+    metadata: { labels: { app: tenant-core-db, tier: db } }
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          env:
+            - { name: POSTGRES_DB,       value: tenant_core }
+            - { name: POSTGRES_USER,     value: tenant }
+            - { name: POSTGRES_PASSWORD, value: tenant }
+          ports: [{ containerPort: 5432 }]
+          readinessProbe:
+            tcpSocket: { port: 5432 }
+            initialDelaySeconds: 5
+            periodSeconds: 3
+          volumeMounts:
+            - { name: seed, mountPath: /docker-entrypoint-initdb.d }
+            - { name: data, mountPath: /var/lib/postgresql/data }
+      volumes:
+        - name: seed
+          configMap: { name: tenant-core-seed }
+        - name: data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata: { name: tenant-core-db, namespace: propdev }
+spec:
+  selector: { app: tenant-core-db }
+  ports: [{ port: 5432, targetPort: 5432 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: partner-db
+  namespace: propdev
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: partner-db } }
+  template:
+    metadata: { labels: { app: partner-db, tier: db } }
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          env:
+            - { name: POSTGRES_DB,       value: partner }
+            - { name: POSTGRES_USER,     value: partner }
+            - { name: POSTGRES_PASSWORD, value: partner }
+          ports: [{ containerPort: 5432 }]
+          readinessProbe:
+            tcpSocket: { port: 5432 }
+            initialDelaySeconds: 5
+            periodSeconds: 3
+          volumeMounts:
+            - { name: seed, mountPath: /docker-entrypoint-initdb.d }
+            - { name: data, mountPath: /var/lib/postgresql/data }
+      volumes:
+        - name: seed
+          configMap: { name: partner-seed }
+        - name: data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata: { name: partner-db, namespace: propdev }
+spec:
+  selector: { app: partner-db }
+  ports: [{ port: 5432, targetPort: 5432 }]
