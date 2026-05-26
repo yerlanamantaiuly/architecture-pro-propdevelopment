@@ -1,0 +1,68 @@
+# ─── prop-namespace-developer ─────────────────────────────────────────────
+# Доменный разработчик: может развёртывать и менять рабочие нагрузки в
+# своём namespace, но не имеет права читать секреты, менять RBAC или
+# трогать NetworkPolicy/PSA-метки.
+#
+# Хранится как ClusterRole (это позволяет переиспользовать через
+# RoleBinding в нескольких namespace без копий определений).
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: prop-namespace-developer
+  labels: { managed-by: task4-rbac, prop-category: namespace-developer }
+rules:
+  - apiGroups: [""]
+    resources:
+      - pods
+      - pods/log
+      - pods/exec
+      - services
+      - configmaps
+      - persistentvolumeclaims
+      - serviceaccounts
+      - events
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["apps"]
+    resources: ["deployments", "statefulsets", "daemonsets", "replicasets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["batch"]
+    resources: ["jobs", "cronjobs"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["autoscaling"]
+    resources: ["horizontalpodautoscalers"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingresses"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  # Явно НЕТ:
+  # - secrets (приходят через ExternalSecrets/Vault, см. Task 3 SEC-T3-01)
+  # - roles / rolebindings (только админ namespace может выдавать права)
+  # - networkpolicies (управляется DevOps, см. Task 5)
+---
+# ─── prop-namespace-viewer ────────────────────────────────────────────────
+# Доменный менеджер: только read-only в своём namespace, без секретов.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: prop-namespace-viewer
+  labels: { managed-by: task4-rbac, prop-category: namespace-viewer }
+rules:
+  - apiGroups: [""]
+    resources:
+      - pods
+      - pods/log
+      - services
+      - configmaps
+      - persistentvolumeclaims
+      - serviceaccounts
+      - events
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments", "statefulsets", "daemonsets", "replicasets"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["batch"]
+    resources: ["jobs", "cronjobs"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingresses"]
+    verbs: ["get", "list", "watch"]

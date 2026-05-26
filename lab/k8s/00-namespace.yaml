@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: propdev
+  labels:
+    # Намеренно НЕ выставляем pod-security.kubernetes.io/* — это «уязвимое» состояние.
+    # В Task7 покажем правильный namespace с PSA=restricted.
+    purpose: "lab-vulnerable-state"

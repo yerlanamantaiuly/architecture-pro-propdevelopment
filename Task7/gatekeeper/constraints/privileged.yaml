@@ -1,0 +1,21 @@
+# Constraint — экземпляр шаблона K8sPSPPrivilegedContainer.
+# Применяется к двум namespace-ам:
+#   - audit-zone: тот, где параллельно работает PSA restricted. Здесь
+#     PSA отклонит pod первым, но Gatekeeper тоже зафиксирует попытку
+#     в аудите (audit-режим).
+#   - gatekeeper-test: namespace БЕЗ PSA-меток, чтобы было видно: без
+#     Gatekeeper'а такой под прошёл бы admission. Создаётся скриптом
+#     verify-admission.sh.
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sPSPPrivilegedContainer
+metadata:
+  name: psp-no-privileged-containers
+spec:
+  enforcementAction: deny
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+    namespaces:
+      - audit-zone
+      - gatekeeper-test

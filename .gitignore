@@ -1,0 +1,9 @@
+# Task 4 — сгенерированные приватные ключи и kubeconfig'и с client cert/key.
+# Перегенерируются скриптом 01-create-users.sh. В git не идут.
+Task4/kubeconfigs/
+Task4/.work/
+
+# Прочие локальные артефакты
+*.log
+!Task6/audit.log           # это — улика для ревьюера, фиксируем
+.DS_Store

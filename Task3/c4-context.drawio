@@ -1,0 +1,130 @@
+<mxfile host="65bd71144e">
+    <diagram name="C4 Context — PropDevelopment + Smart Home" id="c4-context-—-propdevelopment-+-smart-home">
+        <mxGraphModel dx="2454" dy="926" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1000" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="Собственник  [Person] Жилец, использует моб.приложение" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#08427B;strokeColor=#073B6F;fontColor=#FFFFFF;fontSize=12;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="60" y="120" width="200" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="Гость  [Person] Звонит в домофон или подъезжает на машине" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#08427B;strokeColor=#073B6F;fontColor=#FFFFFF;fontSize=12;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="60" y="280" width="200" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="Менеджер УК  [Person] Настраивает правила доступа в жилом комплексе" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#08427B;strokeColor=#073B6F;fontColor=#FFFFFF;fontSize=12;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="60" y="440" width="200" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="PropDevelopment  [Software System] IT-платформа застройщика и УК. После внедрения — оркестрирует доступ к сервисам «Умного дома»" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1168BD;strokeColor=#0E5BAB;fontColor=#FFFFFF;fontSize=12" parent="1" vertex="1">
+                    <mxGeometry x="520" y="240" width="360" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="Smart Home Platform  [External Software System] [НОВОЕ] Партнёрская платформа. Управляет домофонами и шлагбаумами, проводит биометрическое распознавание" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#999999;strokeColor=#82B366;strokeWidth=3;fontColor=#FFFFFF;fontSize=12" parent="1" vertex="1">
+                    <mxGeometry x="1180" y="80" width="280" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="API партнёрских УК  [External Software System] Интеграция ЖКУ (оплата, данные о доме)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#999999;strokeColor=#6C6C6C;fontColor=#FFFFFF;fontSize=12" parent="1" vertex="1">
+                    <mxGeometry x="1180" y="270" width="280" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="Госорганы (Росреестр и др.)  [External Software System] Этапы юридической части сделки" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#999999;strokeColor=#6C6C6C;fontColor=#FFFFFF;fontSize=12" parent="1" vertex="1">
+                    <mxGeometry x="1180" y="420" width="280" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="Платёжные системы  [External Software System] Приём оплаты ЖКУ и сделок" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#999999;strokeColor=#6C6C6C;fontColor=#FFFFFF;fontSize=12" parent="1" vertex="1">
+                    <mxGeometry x="1180" y="570" width="280" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="Видеодомофон [Hardware] [НОВОЕ]" style="shape=mxgraph.cisco.servers.standard_host;html=1;fillColor=#FFE6CC;strokeColor=#D79B00;fontColor=#000000;fontSize=11" parent="1" vertex="1">
+                    <mxGeometry x="580" y="720" width="160" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="Шлагбаум [Hardware] [НОВОЕ]" style="shape=mxgraph.cisco.servers.standard_host;html=1;fillColor=#FFE6CC;strokeColor=#D79B00;fontColor=#000000;fontSize=11" parent="1" vertex="1">
+                    <mxGeometry x="780" y="720" width="160" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="Использует моб.приложение для управления «Умным домом» [HTTPS]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#666666;fontSize=10;fontColor=#222222" parent="1" source="2" target="5" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="650" y="175"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="13" value="Настраивает правила доступа в системе УК [HTTPS]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#666666;fontSize=10;fontColor=#222222" parent="1" source="4" target="5" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="Звонит / показывает лицо" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#2E7D32;strokeWidth=2;fontSize=10;fontColor=#1B5E20" parent="1" source="3" target="10" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="10" y="320"/>
+                            <mxPoint x="10" y="770"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="15" value="Подъезжает на машине (распознавание номера)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#2E7D32;strokeWidth=2;fontSize=10;fontColor=#1B5E20" parent="1" source="3" target="11" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="30" y="335"/>
+                            <mxPoint x="30" y="670"/>
+                            <mxPoint x="860" y="670"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="16" value="Делегирует управление устройствами и enroll биометрии [HTTPS, OAuth 2.0, mTLS]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#2E7D32;strokeWidth=2;fontSize=10;fontColor=#1B5E20" parent="1" source="5" target="6" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1320" y="260"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="17" value="События доступа (webhook + HMAC)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#2E7D32;strokeWidth=2;fontSize=10;fontColor=#1B5E20" parent="1" source="6" target="5" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" value="Прямое управление [партнёрский протокол]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#2E7D32;strokeWidth=2;fontSize=10;fontColor=#1B5E20" parent="1" source="6" target="10" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1510" y="140"/>
+                            <mxPoint x="1510" y="840"/>
+                            <mxPoint x="660" y="840"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="19" value="Прямое управление" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#2E7D32;strokeWidth=2;fontSize=10;fontColor=#1B5E20" parent="1" source="6" target="11" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1490" y="155"/>
+                            <mxPoint x="1490" y="770"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="20" value="Интеграция ЖКУ [HTTPS]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#666666;fontSize=10;fontColor=#222222" parent="1" source="5" target="7" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1030" y="340"/>
+                            <mxPoint x="1030" y="300"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="21" value="Сделки и документы [HTTPS]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#666666;fontSize=10;fontColor=#222222" parent="1" source="5" target="8" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1030" y="390"/>
+                            <mxPoint x="1030" y="475"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="22" value="Платежи [HTTPS]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#666666;fontSize=10;fontColor=#222222" parent="1" source="5" target="9" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="700" y="550"/>
+                            <mxPoint x="1320" y="550"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="23" value="Условные обозначения:" style="text;html=1;align=left;fontSize=12;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="60" y="850" width="200" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="24" value="Существующий элемент" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1168BD;strokeColor=#0E5BAB;fontColor=#FFFFFF;fontSize=12" parent="1" vertex="1">
+                    <mxGeometry x="60" y="885" width="200" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="25" value="Новый элемент" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1168BD;strokeColor=#82B366;strokeWidth=3;fontColor=#FFFFFF;fontSize=12" parent="1" vertex="1">
+                    <mxGeometry x="280" y="885" width="200" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="26" value="Внешний партнёр" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#999999;strokeColor=#6C6C6C;fontColor=#FFFFFF;fontSize=12" parent="1" vertex="1">
+                    <mxGeometry x="500" y="885" width="200" height="25" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

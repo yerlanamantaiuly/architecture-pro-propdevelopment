@@ -1,0 +1,96 @@
+# ─── prop-security-auditor ────────────────────────────────────────────────
+# Привилегированная роль для специалиста по ИБ. Может читать ВСЁ, в т.ч.
+# secrets и rolebindings, чтобы расследовать инциденты и проводить аудит.
+# Никаких прав на изменение.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: prop-security-auditor
+  labels: { managed-by: task4-rbac, prop-category: privileged }
+rules:
+  # Все ресурсы любых API-групп — только get/list/watch
+  - apiGroups: ["*"]
+    resources: ["*"]
+    verbs: ["get", "list", "watch"]
+  # Доступ к нестандартным эндпоинтам для аудита
+  - nonResourceURLs: ["*"]
+    verbs: ["get"]
+---
+# ─── prop-cluster-viewer ──────────────────────────────────────────────────
+# Непривилегированный просмотр кластера. Не видит секретов — это умышленно,
+# чтобы не давать содержимое токенов и паролей бизнес-аналитикам.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: prop-cluster-viewer
+  labels: { managed-by: task4-rbac, prop-category: cluster-view }
+rules:
+  # Стандартные «безопасные» ресурсы для просмотра — без secrets и RBAC.
+  - apiGroups: [""]
+    resources:
+      - pods
+      - pods/log
+      - services
+      - configmaps
+      - persistentvolumeclaims
+      - namespaces
+      - nodes
+      - events
+      - serviceaccounts
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments", "statefulsets", "daemonsets", "replicasets"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["batch"]
+    resources: ["jobs", "cronjobs"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingresses", "networkpolicies"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["autoscaling"]
+    resources: ["horizontalpodautoscalers"]
+    verbs: ["get", "list", "watch"]
+  # Явно НЕТ:
+  # - secrets (не должен видеть пароли и токены)
+  # - rolebindings / clusterrolebindings / roles / clusterroles (модель доступа)
+---
+# ─── prop-cluster-configurer ──────────────────────────────────────────────
+# Непривилегированная роль настройки кластера. DevOps-инженеры управляют
+# инфраструктурными ресурсами, не получая доступа к секретам и RBAC.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: prop-cluster-configurer
+  labels: { managed-by: task4-rbac, prop-category: cluster-configure }
+rules:
+  # Namespaces — создавать/удалять/менять метки и квоты
+  - apiGroups: [""]
+    resources: ["namespaces"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: [""]
+    resources: ["resourcequotas", "limitranges"]
+    verbs: ["*"]
+  # StorageClass, PV (cluster-scoped)
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["storageclasses", "csidrivers", "volumeattachments"]
+    verbs: ["*"]
+  - apiGroups: [""]
+    resources: ["persistentvolumes"]
+    verbs: ["*"]
+  # Ingress инфраструктура и cluster-уровневые сетевые ресурсы
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingressclasses"]
+    verbs: ["*"]
+  - apiGroups: ["scheduling.k8s.io"]
+    resources: ["priorityclasses"]
+    verbs: ["*"]
+  - apiGroups: ["node.k8s.io"]
+    resources: ["runtimeclasses"]
+    verbs: ["*"]
+  # Возможность смотреть, что происходит в кластере (как viewer, но без секретов)
+  - apiGroups: [""]
+    resources: ["pods", "services", "configmaps", "events", "nodes"]
+    verbs: ["get", "list", "watch"]
+  # Явно НЕТ:
+  # - secrets (DevOps работает через ExternalSecrets/Vault, см. Task 3 SEC-T3-01)
+  # - rolebindings / clusterrolebindings / roles / clusterroles

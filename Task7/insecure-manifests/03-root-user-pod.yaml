@@ -1,0 +1,14 @@
+# НЕЗАЩИЩЁННЫЙ под — явно запускается под UID 0 (root) без runAsNonRoot.
+# Нарушает PSA restricted И OPA Gatekeeper constraint k8spsprunasnonroot.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: root-user-pod
+  namespace: audit-zone
+spec:
+  containers:
+    - name: shell
+      image: alpine:3.20
+      command: ["sleep", "3600"]
+      securityContext:
+        runAsUser: 0                    # ← главная проблема

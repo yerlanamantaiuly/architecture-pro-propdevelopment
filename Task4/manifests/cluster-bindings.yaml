@@ -1,0 +1,55 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: prop-platform-admins-binding
+  labels: { managed-by: task4-rbac }
+subjects:
+  - kind: Group
+    name: prop-platform-admins
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin           # встроенная роль
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: prop-security-officers-binding
+  labels: { managed-by: task4-rbac }
+subjects:
+  - kind: Group
+    name: prop-security-officers
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: prop-security-auditor
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: prop-cluster-viewers-binding
+  labels: { managed-by: task4-rbac }
+subjects:
+  - kind: Group
+    name: prop-cluster-viewers
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: prop-cluster-viewer
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: prop-cluster-configurers-binding
+  labels: { managed-by: task4-rbac }
+subjects:
+  - kind: Group
+    name: prop-cluster-configurers
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: prop-cluster-configurer
+  apiGroup: rbac.authorization.k8s.io

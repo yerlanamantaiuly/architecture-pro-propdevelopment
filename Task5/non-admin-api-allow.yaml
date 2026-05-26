@@ -1,0 +1,122 @@
+# Task 5 — сетевые политики разграничения трафика в namespace net-lab.
+#
+# Логика:
+#   1. Базовый default-deny на ingress: ни один под в namespace не принимает
+#      входящий трафик, пока он явно не разрешён последующими политиками.
+#   2. Парные политики (по одной на каждую роль-цель) описывают, кто именно
+#      может ходить к этому поду.
+#
+# Итоговая матрица доступа:
+#
+#                       front-end  back-end-api  admin-front-end  admin-back-end-api
+#     front-end           —          ✅              ❌                ❌
+#     back-end-api        ✅         —               ❌                ❌
+#     admin-front-end     ❌         ❌              —                 ✅
+#     admin-back-end-api  ❌         ❌              ✅                —
+#     прочие поды         ❌         ❌              ❌                ❌
+#
+# По задаче нужен трафик «в обе стороны» в каждой паре — поэтому для каждой
+# пары роль_A ↔ роль_B есть две Ingress-политики (по одной на каждой
+# стороне).
+#
+# NetworkPolicy — stateful: ответный трафик разрешённой ingress-сессии
+# проходит без отдельных правил. Egress по умолчанию не ограничиваем —
+# изоляция достигается на стороне получателя.
+
+---
+# ─── 1. Default-deny ingress на весь namespace ───────────────────────────
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: net-lab
+spec:
+  podSelector: {}             # ВСЕ поды namespace
+  policyTypes:
+    - Ingress
+  # ingress отсутствует → запрещено всё, что не разрешено явно
+---
+# ─── 2. back-end-api принимает трафик ТОЛЬКО от front-end ─────────────────
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-frontend-to-backend-api
+  namespace: net-lab
+spec:
+  podSelector:
+    matchLabels:
+      role: back-end-api
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              role: front-end
+      ports:
+        - protocol: TCP
+          port: 80
+---
+# ─── 3. front-end принимает трафик ТОЛЬКО от back-end-api ─────────────────
+# (вторая сторона пары — обратное направление)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-backend-api-to-frontend
+  namespace: net-lab
+spec:
+  podSelector:
+    matchLabels:
+      role: front-end
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              role: back-end-api
+      ports:
+        - protocol: TCP
+          port: 80
+---
+# ─── 4. admin-back-end-api принимает только от admin-front-end ────────────
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-admin-frontend-to-admin-backend-api
+  namespace: net-lab
+spec:
+  podSelector:
+    matchLabels:
+      role: admin-back-end-api
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              role: admin-front-end
+      ports:
+        - protocol: TCP
+          port: 80
+---
+# ─── 5. admin-front-end принимает только от admin-back-end-api ────────────
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-admin-backend-api-to-admin-frontend
+  namespace: net-lab
+spec:
+  podSelector:
+    matchLabels:
+      role: admin-front-end
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              role: admin-back-end-api
+      ports:
+        - protocol: TCP
+          port: 80

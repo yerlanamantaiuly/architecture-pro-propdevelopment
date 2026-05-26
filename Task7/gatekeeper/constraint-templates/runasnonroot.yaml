@@ -1,0 +1,65 @@
+# ConstraintTemplate: K8sPSPRunAsNonRoot.
+# Закрывает сразу две части задания:
+#   1) runAsNonRoot: true обязателен (хотя бы на уровне пода или
+#      каждого контейнера);
+#   2) readOnlyRootFilesystem: true обязателен для каждого контейнера.
+#
+# Если что-то нарушено — Rego возвращает отдельные violation[] для каждой
+# проблемы. Gatekeeper показывает их все в одном responseError, что удобно
+# для отладки.
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8spsprunasnonroot
+  annotations:
+    description: |
+      Requires runAsNonRoot: true (pod or per-container) and
+      readOnlyRootFilesystem: true on every container.
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sPSPRunAsNonRoot
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8spsprunasnonroot
+
+        # ---------- runAsNonRoot ----------
+        violation[{"msg": msg}] {
+          c := input_containers[_]
+          not container_runs_as_nonroot(c)
+          msg := sprintf(
+            "Container must set runAsNonRoot: true (container=%v)",
+            [c.name]
+          )
+        }
+
+        # Контейнер считается non-root, если ИЛИ pod-level securityContext
+        # ИЛИ container-level securityContext имеет runAsNonRoot: true.
+        # При этом runAsUser: 0 однозначно нарушает требование.
+        container_runs_as_nonroot(c) {
+          c.securityContext.runAsNonRoot == true
+          not c.securityContext.runAsUser == 0
+        }
+        container_runs_as_nonroot(c) {
+          input.review.object.spec.securityContext.runAsNonRoot == true
+          not c.securityContext.runAsUser == 0
+        }
+
+        # ---------- readOnlyRootFilesystem ----------
+        violation[{"msg": msg}] {
+          c := input_containers[_]
+          not c.securityContext.readOnlyRootFilesystem == true
+          msg := sprintf(
+            "Container must set readOnlyRootFilesystem: true (container=%v)",
+            [c.name]
+          )
+        }
+
+        input_containers[c] {
+          c := input.review.object.spec.containers[_]
+        }
+        input_containers[c] {
+          c := input.review.object.spec.initContainers[_]
+        }

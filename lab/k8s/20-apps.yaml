@@ -1,0 +1,106 @@
+# Образы приложений собираются bootstrap.sh внутрь docker-демона Minikube,
+# поэтому imagePullPolicy: Never и тэг :dev.
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-mart-app
+  namespace: propdev
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: client-mart-app } }
+  template:
+    metadata: { labels: { app: client-mart-app, tier: api, role: sales } }
+    spec:
+      containers:
+        - name: app
+          image: client-mart-app:dev
+          imagePullPolicy: Never
+          env:
+            - { name: MART_DB_DSN, value: "postgresql://mart:mart@client-mart-db:5432/client_mart" }
+          ports: [{ containerPort: 8000 }]
+---
+apiVersion: v1
+kind: Service
+metadata: { name: client-mart-app, namespace: propdev }
+spec:
+  selector: { app: client-mart-app }
+  ports: [{ port: 80, targetPort: 8000 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-crm-app
+  namespace: propdev
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: client-crm-app } }
+  template:
+    metadata: { labels: { app: client-crm-app, tier: api, role: sales } }
+    spec:
+      containers:
+        - name: app
+          image: client-crm-app:dev
+          imagePullPolicy: Never
+          env:
+            - { name: CRM_DB_DSN, value: "postgresql://crm:crm@client-crm-db:5432/client_crm" }
+          ports: [{ containerPort: 8000 }]
+---
+apiVersion: v1
+kind: Service
+metadata: { name: client-crm-app, namespace: propdev }
+spec:
+  selector: { app: client-crm-app }
+  ports: [{ port: 80, targetPort: 8000 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tenant-core-app
+  namespace: propdev
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: tenant-core-app } }
+  template:
+    metadata: { labels: { app: tenant-core-app, tier: api, role: tenant } }
+    spec:
+      containers:
+        - name: app
+          image: tenant-core-app:dev
+          imagePullPolicy: Never
+          env:
+            - { name: TENANT_DB_DSN, value: "postgresql://tenant:tenant@tenant-core-db:5432/tenant_core" }
+          ports: [{ containerPort: 8000 }]
+---
+apiVersion: v1
+kind: Service
+metadata: { name: tenant-core-app, namespace: propdev }
+spec:
+  selector: { app: tenant-core-app }
+  ports: [{ port: 80, targetPort: 8000 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: partner-api
+  namespace: propdev
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: partner-api } }
+  template:
+    metadata: { labels: { app: partner-api, tier: api, role: partner } }
+    spec:
+      containers:
+        - name: app
+          image: partner-api:dev
+          imagePullPolicy: Never
+          env:
+            - { name: PARTNER_DB_DSN, value: "postgresql://partner:partner@partner-db:5432/partner" }
+          ports: [{ containerPort: 8000 }]
+---
+apiVersion: v1
+kind: Service
+metadata: { name: partner-api, namespace: propdev }
+spec:
+  selector: { app: partner-api }
+  ports: [{ port: 80, targetPort: 8000 }]

@@ -1,0 +1,37 @@
+# ConstraintTemplate: K8sPSPPrivilegedContainer.
+# Запрещает контейнерам флаг securityContext.privileged: true.
+#
+# Шаблон определяет CRD K8sPSPPrivilegedContainer; конкретный экземпляр
+# (constraint) лежит в gatekeeper/constraints/privileged.yaml.
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8spspprivilegedcontainer
+  annotations:
+    description: "Bans pods that request securityContext.privileged: true."
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sPSPPrivilegedContainer
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8spspprivileged
+
+        violation[{"msg": msg, "details": {}}] {
+          c := input_containers[_]
+          c.securityContext.privileged == true
+          msg := sprintf(
+            "Privileged container is not allowed: container=%v, namespace=%v",
+            [c.name, input.review.object.metadata.namespace]
+          )
+        }
+
+        # Объединяем обычные и init-контейнеры в один поток.
+        input_containers[c] {
+          c := input.review.object.spec.containers[_]
+        }
+        input_containers[c] {
+          c := input.review.object.spec.initContainers[_]
+        }

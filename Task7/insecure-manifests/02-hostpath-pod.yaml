@@ -1,0 +1,19 @@
+# НЕЗАЩИЩЁННЫЙ под — монтирует корень ноды через hostPath.
+# Нарушает PSA restricted И OPA Gatekeeper constraint k8spsphostpath.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hostpath-pod
+  namespace: audit-zone
+spec:
+  containers:
+    - name: shell
+      image: alpine:3.20
+      command: ["sleep", "3600"]
+      volumeMounts:
+        - name: host-root
+          mountPath: /host
+  volumes:
+    - name: host-root
+      hostPath:                         # ← главная проблема
+        path: /

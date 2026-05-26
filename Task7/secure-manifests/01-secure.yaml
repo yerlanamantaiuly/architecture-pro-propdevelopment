@@ -1,0 +1,40 @@
+# БЕЗОПАСНАЯ версия 01-privileged-pod.yaml.
+#
+# Что починили:
+#   - убран privileged: true;
+#   - явно runAsNonRoot: true и runAsUser: 10001;
+#   - allowPrivilegeEscalation: false;
+#   - capabilities.drop: [ALL];
+#   - readOnlyRootFilesystem: true (требование OPA constraint runasnonroot);
+#   - seccompProfile: RuntimeDefault (требование PSA restricted).
+#
+# Чтобы alpine не сыпался на запись в /tmp при readOnlyRootFilesystem,
+# монтируем emptyDir в /tmp.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secure-non-privileged
+  namespace: audit-zone
+spec:
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    runAsGroup: 10001
+    fsGroup: 10001
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+    - name: shell
+      image: alpine:3.20
+      command: ["sleep", "3600"]
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop: ["ALL"]
+      volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+  volumes:
+    - name: tmp
+      emptyDir: {}
