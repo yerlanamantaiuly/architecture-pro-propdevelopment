@@ -1,0 +1,136 @@
+[
+  {
+    "auditID": "31e8f6df-f2ac-4e80-8d03-e48bcf6c13d0",
+    "stage": "ResponseComplete",
+    "verb": "create",
+    "requestReceivedTimestamp": "2026-05-26T13:27:44.574244Z",
+    "user": "minikube-user",
+    "impersonatedUser": null,
+    "sourceIPs": [
+      "192.168.49.1"
+    ],
+    "objectRef": {
+      "resource": "pods",
+      "namespace": "secure-ops",
+      "name": "privileged-pod",
+      "apiVersion": "v1"
+    },
+    "responseStatus": 201,
+    "category": "privileged-pod"
+  },
+  {
+    "auditID": "37e07fc7-2c6c-4fd4-9fcd-5b4b8be4f2c2",
+    "stage": "ResponseComplete",
+    "verb": "create",
+    "requestReceivedTimestamp": "2026-05-26T13:27:45.049395Z",
+    "user": "minikube-user",
+    "impersonatedUser": null,
+    "sourceIPs": [
+      "192.168.49.1"
+    ],
+    "objectRef": {
+      "resource": "configmaps",
+      "namespace": "secure-ops",
+      "name": "audit-policy",
+      "apiVersion": "v1"
+    },
+    "responseStatus": 201,
+    "category": "audit-policy-tamper"
+  },
+  {
+    "auditID": "70521c6f-98e1-4a01-a026-f9689ecd988d",
+    "stage": "ResponseComplete",
+    "verb": "create",
+    "requestReceivedTimestamp": "2026-05-26T13:27:45.300574Z",
+    "user": "minikube-user",
+    "impersonatedUser": null,
+    "sourceIPs": [
+      "192.168.49.1"
+    ],
+    "objectRef": {
+      "resource": "rolebindings",
+      "namespace": "secure-ops",
+      "name": "escalate-binding",
+      "apiGroup": "rbac.authorization.k8s.io",
+      "apiVersion": "v1"
+    },
+    "responseStatus": 201,
+    "category": "cluster-admin-binding"
+  },
+  {
+    "auditID": "80eaf740-d94a-46f8-a71b-9a7e5f4df879",
+    "stage": "ResponseStarted",
+    "verb": "get",
+    "requestReceivedTimestamp": "2026-05-26T13:27:44.931060Z",
+    "user": "minikube-user",
+    "impersonatedUser": null,
+    "sourceIPs": [
+      "192.168.49.1"
+    ],
+    "objectRef": {
+      "resource": "pods",
+      "namespace": "kube-system",
+      "name": "coredns-7d764666f9-5tg8x",
+      "apiVersion": "v1",
+      "subresource": "exec"
+    },
+    "responseStatus": 101,
+    "category": "exec-in-pod"
+  },
+  {
+    "auditID": "9a556b4d-1940-4fa1-a078-8e4370bcfd4c",
+    "stage": "ResponseComplete",
+    "verb": "list",
+    "requestReceivedTimestamp": "2026-05-26T13:27:44.475479Z",
+    "user": "minikube-user",
+    "impersonatedUser": "system:serviceaccount:secure-ops:monitoring",
+    "sourceIPs": [
+      "192.168.49.1"
+    ],
+    "objectRef": {
+      "resource": "secrets",
+      "namespace": "kube-system",
+      "apiVersion": "v1"
+    },
+    "responseStatus": 403,
+    "category": "secrets-access"
+  },
+  {
+    "auditID": "b7dee791-066c-434c-9d93-c4c64454d896",
+    "stage": "ResponseComplete",
+    "verb": "delete",
+    "requestReceivedTimestamp": "2026-05-26T13:27:45.134924Z",
+    "user": "minikube-user",
+    "impersonatedUser": null,
+    "sourceIPs": [
+      "192.168.49.1"
+    ],
+    "objectRef": {
+      "resource": "configmaps",
+      "namespace": "secure-ops",
+      "name": "audit-policy",
+      "apiVersion": "v1"
+    },
+    "responseStatus": 200,
+    "category": "audit-policy-tamper"
+  },
+  {
+    "auditID": "cee6d4ef-e51b-474d-8b63-c6beae635aff",
+    "stage": "ResponseComplete",
+    "verb": "get",
+    "requestReceivedTimestamp": "2026-05-26T13:27:45.218753Z",
+    "user": "minikube-user",
+    "impersonatedUser": null,
+    "sourceIPs": [
+      "192.168.49.1"
+    ],
+    "objectRef": {
+      "resource": "configmaps",
+      "namespace": "secure-ops",
+      "name": "audit-policy",
+      "apiVersion": "v1"
+    },
+    "responseStatus": 404,
+    "category": "audit-policy-tamper"
+  }
+]

@@ -1,0 +1,23 @@
+# Audit policy для kube-apiserver — взята из ТЗ Task 6.
+#
+# Логика двухуровневая:
+#  - RequestResponse (полное тело запроса и ответа) — для чувствительных
+#    ресурсов: pods/secrets/configmaps/serviceaccounts/roles/rolebindings.
+#  - Metadata (только заголовок: who/what/when, без тел) — для всех остальных,
+#    чтобы видеть общую активность без раздувания лога.
+apiVersion: audit.k8s.io/v1
+kind: Policy
+rules:
+  - level: RequestResponse
+    verbs: ["create", "delete", "update", "patch", "get", "list"]
+    resources:
+      - group: ""
+        resources: ["pods", "secrets", "configmaps", "serviceaccounts"]
+      - group: "rbac.authorization.k8s.io"
+        resources: ["roles", "rolebindings", "clusterroles", "clusterrolebindings"]
+  # Второе правило — catch-all. В оригинале ТЗ было `group: "*"`, но это
+  # значение невалидно по схеме audit-policy (K8s валидирует group как RFC 1123
+  # subdomain). Чтобы получить тот же эффект «логировать все остальные операции
+  # на уровне Metadata», просто опускаем блок `resources` — без него правило
+  # применяется ко всем ресурсам, не подпавшим под более конкретные правила выше.
+  - level: Metadata
